@@ -1,0 +1,30 @@
+@CHARSET "UTF-8";
+@import "gs25site.css";
+
+
+#main_chart{
+	margin: 0 auto; width: 1500px;
+}
+
+#sub_chart{
+		margin-left:120px;
+	
+}
+
+#txt_header{margin:20px 10px 40px 150px;
+            text-align:left}
+
+#brand_main{
+	margin-top : 50px;
+	margin-left : 150px;
+}
+#chart_wrap{
+	margin-top : 50px;
+	margin-left : 100px;
+}
+#chart_left{
+	float:left;
+}
+#chart_right{
+	float:left;
+}

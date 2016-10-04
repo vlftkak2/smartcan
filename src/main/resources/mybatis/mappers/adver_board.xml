@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="adver">
+
+<!--  /*
+ 2016-10-04 
+  작업자 : 최형민
+  개발 상황 : 완료
+*/
+-->
+
+	<!--게시물 총 개수 얻기  -->
+	<select id="totalCount" resultType="java.lang.Integer">
+		<![CDATA[
+		select count(*) from adverboards
+				]]>
+	</select>
+	
+	<!-- 게시물 리스트 가져오기 -->
+	<select id="getList" parameterType="map" resultType="kr.ac.sungkyul.smartcan.vo.AdverBoardVo">
+   <![CDATA[
+   select * from(
+   		select c.*,rownum rn from(
+   				select 
+   					a.no,
+   					a.title,
+   					b.name,
+   					a.user_no as UserNo,
+   					a.view_count as count,
+   					to_char(a.reg_date,'yyyy-mm-dd pm hh:mi:ss') as regdate,
+   					a.depth,
+   					a.GROUP_NO as groupNo,
+   					a.ORDER_NO as groupOrderNo 
+   				from adverboards a, users b 
+   				where a.user_no=b.no 
+   				order by group_no desc, order_no asc
+   		) c)
+   where #{page_start}<=rn and rn<=#{page_end}
+   ]]>
+   </select>
+   
+     <!--검색된 게시물 리스트 가져오기  -->
+   	<select id="getListKeyword" parameterType="map" resultType="kr.ac.sungkyul.smartcan.vo.AdverBoardVo">
+   <![CDATA[
+   select * from(
+   		select c.*,rownum rn from(
+   				select 
+   					a.no,
+   					a.title,
+   					b.name,
+   					a.user_no as UserNo,
+   					a.view_count as count,
+   					to_char(a.reg_date,'yyyy-mm-dd pm hh:mi:ss') as regdate,
+   					a.depth,
+   					a.GROUP_NO as groupNo,
+   					a.ORDER_NO as groupOrderNo 
+   				from adverboards a, users b 
+   				where a.user_no=b.no 
+   		and (title like #{keyword} or content like #{keyword})
+   				order by group_no desc, order_no asc
+   		) c)
+   where #{page_start}<=rn and rn<=#{page_end}
+   ]]>
+   </select>
+   
+
+	<!--조회수 증가  -->
+	<update id="updateViewCount" parameterType="java.lang.Long">
+		<![CDATA[
+		update adverboards set
+		view_count = view_count + 1 where no = #{no}
+					]]>
+	</update>
+
+	<!--게시물 수정  -->
+	<update id="update" parameterType="kr.ac.sungkyul.smartcan.vo.AdverBoardVo">
+		<![CDATA[
+		update adverboards set
+		title=#{title}, content=#{content} where no=#{no}
+				]]>
+	</update>
+
+	<!--그룹내 순서 정렬  -->
+	<update id="updatereplyCount" parameterType="map">
+		<![CDATA[
+		update adverboards set
+		order_no=order_no+1 where group_no=#{groupNo} and order_no>=#{orderNo}
+			]]>
+	</update>
+
+	<!--첨부파일 삭제  -->
+	<delete id="deleteAttachFile" parameterType="map">
+		<![CDATA[
+		delete from boardsadfile where groupno=#{no} and orderno>=#{orderno}
+			]]>
+	</delete>
+	
+	<!-- 게시물 삭제 -->
+	<delete id="deleteBoard" parameterType="kr.ac.sungkyul.smartcan.vo.AdverBoardVo">
+		<![CDATA[
+		delete from adverboards where GROUP_NO=#{groupNo} and ORDER_NO>=#{groupOrderNo}
+			]]>
+	</delete>
+
+	<!--유저 번호 얻기  -->
+	<select id="ListByGroupNo" parameterType="java.lang.Integer"
+		resultType="kr.ac.sungkyul.smartcan.vo.AdverBoardVo">
+		<![CDATA[
+		SELECT user_no as UserNo FROM adverboards WHERE group_no =
+		#{groupNo} and depth = 1
+			]]>
+	</select>
+
+	<!--게시물 정보 얻기  -->
+	<select id="listByNo" parameterType="java.lang.Long"
+		resultType="kr.ac.sungkyul.smartcan.vo.AdverBoardVo">
+			<![CDATA[
+	select no,title,content,
+	user_no as UserNo,depth,
+	order_no as groupOrderNo,
+	group_no as groupNo from adverboards where no=#{no1}
+	   		]]>
+	</select>
+
+	<!--게시물 답글 달기  -->
+	<insert id="replyBoard" parameterType="kr.ac.sungkyul.smartcan.vo.AdverBoardVo">
+
+		<selectKey resultType="java.lang.Long" keyProperty="no"
+			order="BEFORE">
+       	<![CDATA[
+       		SELECT seq_adverboards.nextVal as no FROM DUAL
+       	]]>
+		</selectKey>
+		
+		<![CDATA[	
+			insert into adverboards(
+				no, title, content,view_count,group_no,order_no,depth,reg_Date,user_no
+			)
+			values
+			(
+				#{no},
+				#{title},
+				#{content},
+				0,
+				#{groupNo},
+				#{groupOrderNo},
+				#{depth},
+				sysdate,
+				#{UserNo}
+			)
+		]]>
+
+	</insert>
+
+	<!--게시물 글쓰기  -->
+	<insert id="insertBoard" parameterType="kr.ac.sungkyul.smartcan.vo.AdverBoardVo">
+
+		<selectKey resultType="java.lang.Long" keyProperty="no"
+			order="BEFORE">
+       	<![CDATA[
+       		SELECT seq_adverboards.nextVal as no FROM DUAL
+       	]]>
+		</selectKey>
+
+		<![CDATA[	
+			insert into adverboards(
+				no, title, content,view_count,group_no,order_no,depth,reg_Date,user_no
+			)
+			values
+			(
+				#{no},
+				#{title},
+				#{content},
+				0,
+				nvl((select max(group_no) from adverboards), 0)+1,
+				1,
+				1,
+				sysdate,
+				#{UserNo}
+			)
+		]]>
+	</insert>
+
+
+	<!--첨부파일 삽입  -->
+	<insert id="insertAttachFile" parameterType="kr.ac.sungkyul.smartcan.vo.AttachFileAdVO">
+		<![CDATA[
+			insert into boardsadfile(
+				fNO, no, path, orgName, saveName, fileSize,groupno,orderno
+			)
+			values (
+				seq_boardsadfile.nextVal, #{no}, #{path}, #{orgName}, #{saveName}, #{fileSize},#{groupno},#{orderno}
+			)
+		]]>
+	</insert>
+
+	<!--첨부파일 정보 얻기  -->
+	<select id="selectAttachFileByNO" parameterType="java.lang.Long"
+		resultType="kr.ac.sungkyul.smartcan.vo.AttachFileAdVO">
+		<![CDATA[	
+		select * from boardsadfile where no=#{no}
+				]]>
+	</select>
+
+	<!--첨부파일 정보 얻기  -->
+	<select id="selectAttachFileByFNO" parameterType="java.lang.Long"
+		resultType="kr.ac.sungkyul.smartcan.vo.AttachFileAdVO">
+		<![CDATA[	
+		select * from boardsadfile where fno=#{fNO}
+			]]>
+	</select>
+
+	<!--첨부파일 그룹 번호 얻기  -->
+	<select id="list" resultType="kr.ac.sungkyul.smartcan.vo.AttachFileAdVO">
+				<![CDATA[	
+		select groupno from boardsadfile
+			]]>
+	</select>
+
+
+
+
+</mapper>
+	

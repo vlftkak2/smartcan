@@ -1,0 +1,137 @@
+@CHARSET "UTF-8";
+@import "gs25site.css";
+
+#highlight{
+   margin-bottom:10px;
+   font-weight:bold;
+   font-size:1.5em;
+}
+
+#intro_main{
+   margin: 0 auto; width: 1200px;
+}
+#about_wrap{
+   float:left;
+}
+#intro_sub{
+   margin-left:150px;
+}
+
+#brand_main{
+margin-top : 50px;
+
+}
+#first_wrap{
+   width:1500px;
+   margin-bottom:20px;
+   float:left;
+}
+#about_wrap{
+   margin-left:50px;
+}
+#about_bottom{
+   margin-top:30px;
+   margin-bottom:20px;
+}
+#groce_wrap{
+   float:left;
+}
+#fresh_wrap{
+   float:left;
+   margin-left:30px;
+}
+#second_wrap{
+   width:1200px;
+   margin-top:20px;
+   margin-bottom:20px;
+   
+}
+#set_one{
+   width:330px;
+   float:left;
+}
+#set_two{
+   width:330px;
+   float:left;
+}
+#set_three{
+   width:330px;
+   float:left;
+}
+#content_one{
+   float:left;
+   text-align:center;
+}
+#content_two{
+   float:left;
+   text-align:center;
+}
+
+#content_three{
+   float:left;
+   text-align:center;
+}
+#end_wrap{
+   margin-top:40px;
+   margin-bottom:40px;
+}
+#three_wrap{
+   width:950px;
+   float:left;
+   text-align:center;
+   margin-top:40px;
+   margin-bottom:20px;
+   background-color:rgb(138, 191, 80);
+   color:white;
+}
+#text_wrap{
+   text-align:center;
+   margin-bottom:20px;
+}
+/*Button bootstrap*/
+.btn{
+   display:inline-block;
+   padding:6px 12px;
+   margin-bottom:0;
+   font-size:14px;
+   font-weight:400;
+   line-height:1.42857143;
+   text-align:center;
+   white-space:nowrap;
+   vertical-align:middle;
+   -ms-touch-action:manipulation;
+   touch-action:manipulation;
+   cursor:pointer;
+   -webkit-user-select:none;
+   -moz-user-select:none;
+   -ms-user-select:none;
+   user-select:none;
+   background-image:none;
+   border:1px solid transparent;
+   border-radius:4px;
+}
+.btn.active.focus,.btn.active:focus,.btn.focus,.btn:active.focus,.btn:active:focus,.btn:focus{
+   outline:thin dotted;
+   outline:5px auto -webkit-focus-ring-color;
+   outline-offset:-2px;
+}
+.btn.focus,.btn:focus,.btn:hover{color:#333333;text-decoration:none}
+.btn.active,.btn:active{
+   background-image:none;
+   outline:0;-webkit-box-shadow:inset 0 3px 5px rgba(0,0,0,.125);
+   box-shadow:inset 0 3px 5px rgba(0,0,0,.125);
+}
+.btn-block {
+    display: block;
+    /*width: 100%;*/
+    width:305px;
+}
+.btn-primary {
+    color: #000000;
+    background-color: #E6E6E7;
+    border:none;
+    padding: 15px 25px;
+    border-radius:30px;
+    font-size:18px;
+    text-align:center;
+}
