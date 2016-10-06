@@ -1,5 +1,5 @@
 @CHARSET "UTF-8";
-@import "gs25site.css";
+@IMPORT "smartcan.css";
 
 #map{
 width: 40%; height: 350px; 

@@ -83,5 +83,22 @@ public class MapDao {
 			return list;
 		}
 	}
+	
+	//(안드로이드)지도 좌표 리스트
+	public List<MapVo> getPointList(){
+		
+		List<MapVo> list=sqlSession.selectList("search.getPointList");
+		return list;
+	}
+	
+	//(안드로이드)검색된 좌표값 가져오기
+	public List<MapVo> getSearchlist(String keyword){
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("keyword", keyword);
+		
+		List<MapVo> list=sqlSession.selectList("search.getSearchlist",map);
+		return list;
+	}
 
 }

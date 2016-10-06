@@ -38,13 +38,13 @@ public class MapVo {
 	public void setRegionno(Long regionno) {
 		this.regionno = regionno;
 	}
+	
+	@Override
+	public String toString() {
+		return "MapVo [no=" + no + ", name=" + name + ", localx=" + localx + ", localy=" + localy + ", regionno="
+				+ regionno + "]";
+	}
 
 
-	
-	
-	
-	
-	
-	
 
 }

@@ -1,15 +1,10 @@
 package kr.ac.sungkyul.smartcan.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-
-import javax.sql.DataSource;
-
+import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import kr.ac.sungkyul.smartcan.vo.PassLinkVo;
 import kr.ac.sungkyul.smartcan.vo.UserVo;
 
 
@@ -17,282 +12,90 @@ import kr.ac.sungkyul.smartcan.vo.UserVo;
 public class UserDao {
 	
 	@Autowired
-	private DataSource dataSource;
-
+	private SqlSession sqlSession;
+	
+	// 회원가입
 	public void insert(UserVo vo) {
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-
-		try {
-			conn=dataSource.getConnection();
-			String sql = "insert into users "
-					+ "values(seq_users.nextval, ?, ?, ?, to_date(?,'yyyy-mm-dd'), ?, ?, ?, 0,'관리자','1')";
-			pstmt = conn.prepareStatement(sql);
-
-			pstmt.setString(1, vo.getName());
-			pstmt.setString(2, vo.getEmail());
-			pstmt.setString(3, vo.getPassword());
-			pstmt.setString(4, vo.getBirth());
-			pstmt.setString(5, vo.getGender());
-			pstmt.setString(6, vo.getAddress());
-			pstmt.setString(7, vo.getPhone());
-
-			pstmt.executeUpdate();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
+		 sqlSession.insert("user.insert",vo);
 	}
-
-	public UserVo get(String email, String password) {	//login
-		UserVo vo = null;
-		Connection conn = null;
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-
-		try {
-			conn=dataSource.getConnection();
-
-			String sql = "select no, name from users where email=? and password=?";
-			pstmt = conn.prepareStatement(sql);
-
-			pstmt.setString(1, email);
-			pstmt.setString(2, password);
-
-			rs = pstmt.executeQuery();
-
-			if (rs.next()) {
-				Long no = rs.getLong(1);
-				String name = rs.getString(2);
-
-				System.out.println(no + " " + name);
-
-				vo = new UserVo();
-
-				vo.setNo(no);
-				vo.setName(name);
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				if (pstmt != null) {
-					pstmt.close();
-				}
-				if (conn != null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}
-		}
-
+	
+	// login
+	public UserVo login(String email, String password) {
+		
+		UserVo userVo = new UserVo();
+		userVo.setEmail(email);
+		userVo.setPassword(password);
+	
+		UserVo vo = sqlSession.selectOne("user.login", userVo);
 		return vo;
 	}
-	   
-	   public UserVo get(Long userNo){
-		   UserVo vo = null;
-		   Connection conn = null;
-		   PreparedStatement pstmt = null;
-		   ResultSet rs= null;
-		   
-		   try{
-				conn=dataSource.getConnection();
-			   
-			   String sql = "select no, name, to_char(birth,'yyyymmdd'), gender, address, phone from users where no=?";
-			   pstmt = conn.prepareStatement(sql);
-			   
-			   pstmt.setLong(1, userNo);
-			   
-			   rs = pstmt.executeQuery();
-			
-			   if(rs.next()){
-				   Long no = rs.getLong(1);
-				   String name = rs.getString(2);
-				   String birth = rs.getString(3);
-				   String gender = rs.getString(4);
-				   String address = rs.getString(5);
-				   String phone = rs.getString(6);
-				   
-				   vo = new UserVo();
-				   
-				   vo.setNo(no);
-				   vo.setName(name);
-				   vo.setBirth(birth);
-				   vo.setGender(gender);
-				   vo.setAddress(address);
-				   vo.setPhone(phone);
-			   }
-			   
-		   } catch(SQLException e){
-			   e.printStackTrace();
-		   } finally{
-			   try{
-				   if(pstmt != null ){
-					   pstmt.close();
-				   }
-				   if(conn != null ){
-					   conn.close();
-				   }
-			   } catch(SQLException e){
-				   e.printStackTrace();
-			   }
-		   }
-		   
-		   return vo;
-	   }
-	   
-	   public UserVo update(UserVo vo){
-		   Connection conn = null;
-		   PreparedStatement pstmt = null;
-		   
-		   try{
-				conn=dataSource.getConnection();
-			   
-			   Long no = vo.getNo();
-			   String name = vo.getName();
-			   String password = vo.getPassword();
-			   String birth = vo.getBirth();
-			   String gender = vo.getGender();
-			   String address = vo.getAddress();
-			   String phone = vo.getPhone();
-			   
-			   boolean isPasswordEmpty = "".equals(password);
-			   
-			   String sql = null;
-			   
-			   if(isPasswordEmpty == true){
-				   sql = "update users set name = ?, birth = ?, gender = ?, address = ?, phone = ? where no = ?";
-			   } else{
-				   sql= "update users set name = ?, password = ?, birth = ?, gender = ?, address = ?, phone = ? where no = ?";
-			   }
-			   
-			   pstmt = conn.prepareStatement(sql);
-			   
-			   if(isPasswordEmpty == true){
-				   pstmt.setString(1, name);
-				   pstmt.setString(2, birth);
-				   pstmt.setString(3, gender);
-				   pstmt.setString(4, address);
-				   pstmt.setString(5, phone);
-				   pstmt.setLong(6, no);
-			   } else{
-				   pstmt.setString(1, name);
-				   pstmt.setString(2, password);
-				   pstmt.setString(3, birth);
-				   pstmt.setString(4, gender);
-				   pstmt.setString(5, address);
-				   pstmt.setString(6, phone);
-				   pstmt.setLong(7, no);
-			   }
-			   
-			   pstmt.executeUpdate();
-			   
-		   } catch(SQLException e){
-			   e.printStackTrace();
-		   } finally{
-			   try{
-				   if(pstmt != null ){
-					   pstmt.close();
-				   }
-				   if(conn != null ){
-					   conn.close();
-				   }
-			   } catch(SQLException e){
-				   e.printStackTrace();
-			   }
-		   }
-		   
-		   return vo;
-	   }
-	   
-	   public UserVo get(String email){
-		   UserVo vo = null;
-		   Connection conn = null;
-		   PreparedStatement pstmt = null;
-		   ResultSet rs = null;
-		   
-		   try{
-				conn=dataSource.getConnection();
-			   String sql = "select no, name, email from users where email = ?";
-			   pstmt= conn.prepareStatement(sql);
-			   
-			   pstmt.setString(1, email);
-			   
-			   rs = pstmt.executeQuery();
-			   
-			   if(rs.next()){
-				   vo = new UserVo();
-				   vo.setNo(rs.getLong(1));
-				   vo.setName(rs.getString(2));
-				   vo.setEmail(rs.getString(3));
-			   }
-		   } catch(SQLException e){
-			   e.printStackTrace();
-		   } finally{
-			   try{
-				   if(rs != null){
-					   rs.close();
-				   }
-				   if(pstmt != null ){
-					   pstmt.close();
-				   }
-				   if(conn != null ){
-					   conn.close();
-				   }
-			   } catch(SQLException e){
-				   e.printStackTrace();
-			   }
-		   }
-		   
-		   return vo;
-	   }
-	   
-	   public String find(UserVo vo) {	//login
-			Connection conn = null;
-			PreparedStatement pstmt = null;
-			ResultSet rs = null;
-			String email = null;
-
-			try {
-				conn=dataSource.getConnection();
-				
-				String name = vo.getName();
-				String birth = vo.getBirth();
-				String phone = vo.getPhone();
-
-				String sql = "select email from users where name=? and birth= to_date(?,'yyyy-mm-dd') and phone=?;";
-				pstmt = conn.prepareStatement(sql);
-
-				pstmt.setString(1, name);
-				pstmt.setString(2, birth);
-				pstmt.setString(3, phone);
-
-				rs = pstmt.executeQuery();
-
-				if (rs.next()) {
-					email = rs.getString(1);
-
-					System.out.println(email);
-
-				}
-
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				try {
-					if (pstmt != null) {
-						pstmt.close();
-					}
-					if (conn != null) {
-						conn.close();
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			return email;
-		}
+	
+	//회원 정보 수정 시 정보 불러오기
+	public UserVo get(Long no) {
+		
+		UserVo vo = sqlSession.selectOne("user.getModify",no);
+		System.out.println(vo.toString());
+		return vo;
+	}
+	
+	//회원정보 수정  (패스워드 미입력)
+	public void update(UserVo vo) {	
+		sqlSession.update("user.update",vo);
+	}
+	
+	// 아이디 찾기
+	public String find(UserVo vo) { 
+		String email = sqlSession.selectOne("user.idFind",vo);
+		return email;
+	}
+	// 비밀번호 찾기
+	public String passfind(UserVo vo) {
+		String email = sqlSession.selectOne("user.passFind",vo);
+		return email;
+	}
+	
+	// 비밀번호 검사
+	public void savelink(String link, String email) {
+		Long user_no = sqlSession.selectOne("user.checkEmail",email); // no 가져옴
+		Integer state = 0;
+		
+		PassLinkVo passlinkvo = new PassLinkVo();
+		passlinkvo.setLink(link);
+		passlinkvo.setState(state);
+		passlinkvo.setUser_no(user_no);
+		
+		sqlSession.insert("user.savelink",passlinkvo);
+	}
+	// 비밀번호 링크 설정
+	public PassLinkVo passlink(String link) {
+		
+		PassLinkVo plVo = sqlSession.selectOne("user.passlink",link); // no 가져옴
+		return plVo;
+	}
+	
+	// password 재설정
+	public Integer setPass(Long no, String password) {
+		
+		UserVo userVo = new UserVo();
+		userVo.setNo(no);
+		userVo.setPassword(password);
+		
+		Integer result = sqlSession.update("user.setPass",userVo);
+		return result;
+	}
+	
+	// password (상태) 재설정
+	public void setState(Long user_no, Integer state) { 
+		PassLinkVo passlinkvo = new PassLinkVo();
+		passlinkvo.setUser_no(user_no);
+		passlinkvo.setState(state);
+		sqlSession.update("user.setState",passlinkvo);
+	}
+	
+	// email 유효성 검사
+	public Long checkEmail(String email) {
+		
+		Long no = sqlSession.selectOne("user.checkEmail",email);
+		return no;
+	}
 }

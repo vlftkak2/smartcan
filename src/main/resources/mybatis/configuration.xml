@@ -2,11 +2,14 @@
 <!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
 <configuration>
 	<typeAliases>
+	<typeAlias type="kr.ac.sungkyul.smartcan.vo.UserVo" alias="uservo"/>
+	<typeAlias type="kr.ac.sungkyul.smartcan.vo.PassLinkVo" alias="passlinkvo"/>
 	</typeAliases>
 	<mappers>
 		<mapper resource="mybatis/mappers/custom_board.xml" />	
 	    <mapper resource="mybatis/mappers/adver_board.xml" />	
 	    <mapper resource="mybatis/mappers/position_search.xml" />	
+	    <mapper resource="mybatis/mappers/user.xml" />
 	    
 			</mappers>
 </configuration>
