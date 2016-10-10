@@ -34,7 +34,6 @@ public class MapController {
 		
 		//게시판 리스트
 		Map<String, Object> map=mapservice.list(page, keyword); 
-		System.out.println(map);
 		
 		//지도 리스트
 		Map<String, Object> map2=mapservice.maplist(keyword, no); 

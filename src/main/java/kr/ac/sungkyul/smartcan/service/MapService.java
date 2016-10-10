@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 
 import kr.ac.sungkyul.smartcan.dao.MapDao;
 import kr.ac.sungkyul.smartcan.vo.MapBoardVo;
-import kr.ac.sungkyul.smartcan.vo.MapVo;
 
 /*
  2016-10-04 
@@ -79,7 +78,7 @@ public class MapService {
 	public Map<String, Object> maplist(String keyword, Long no){
 		
 		//맵 리스트 가져오기 
-		List<MapVo> list=mapdao.getList(keyword, no);
+		List<MapBoardVo> list=mapdao.getList(keyword, no);
 		Map<String, Object> map2=new HashMap<String, Object>();
 		map2.put("list", list);
 		map2.put("keyword", keyword);
@@ -87,22 +86,20 @@ public class MapService {
 	}
 	
 	//(안드로이드)지도 총 좌표 리스트
-	public List<MapVo> getPointList(){
+	public List<MapBoardVo> getPointList(){
 		
-		List<MapVo> list=mapdao.getPointList();
+		List<MapBoardVo> list=mapdao.getPointList();
 		
-//		Map<String, Object> map = new HashMap<String, Object>();
-//		map.put("list", list);
 		
 		return list;
 	}
 	
-	//(안드로이드)검색된 좌표값 가져오기
-	public List<MapVo> getSearchlist(String keyword){
+public void update(Long id, Double amount){
 		
-		List<MapVo> list=mapdao.getSearchlist(keyword);
-		return list;
+		mapdao.update(id,amount);
 	}
+	
+
 	
 
 }

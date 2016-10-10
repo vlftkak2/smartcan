@@ -61,7 +61,7 @@ var positions = [
 	<c:forEach var = 'vo' items='${map2.list}' varStatus='s'>
 	 
 	{
-	   content: '${vo.name}', 
+	   content: '${vo.name} ${vo.amount}%', 
 	   latlng: new daum.maps.LatLng('${vo.localx}', '${vo.localy}')
 	    },
 	</c:forEach>
