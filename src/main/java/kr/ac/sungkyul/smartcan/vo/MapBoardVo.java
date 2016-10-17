@@ -6,22 +6,9 @@ public class MapBoardVo {
 	private String name;
 	private String address;
 	private double localx;
-	public double getLocalx() {
-		return localx;
-	}
-	public void setLocalx(double localx) {
-		this.localx = localx;
-	}
-	public double getLocaly() {
-		return localy;
-	}
-	public void setLocaly(double localy) {
-		this.localy = localy;
-	}
 	private double localy;
+	private double amount;
 	private Long regionno;
-	private Double amount;
-	
 	public Long getNo() {
 		return no;
 	}
@@ -40,30 +27,36 @@ public class MapBoardVo {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+	public double getLocalx() {
+		return localx;
+	}
+	public void setLocalx(double localx) {
+		this.localx = localx;
+	}
+	public double getLocaly() {
+		return localy;
+	}
+	public void setLocaly(double localy) {
+		this.localy = localy;
+	}
+	public double getAmount() {
+		return amount;
+	}
+	public void setAmount(double amount) {
+		this.amount = amount;
+	}
 	public Long getRegionno() {
 		return regionno;
 	}
-	
 	public void setRegionno(Long regionno) {
 		this.regionno = regionno;
-	}
-	
-	
-	public Double getAmount() {
-		return amount;
-	}
-	public void setAmount(Double amount) {
-		this.amount = amount;
 	}
 	
 	@Override
 	public String toString() {
 		return "MapBoardVo [no=" + no + ", name=" + name + ", address=" + address + ", localx=" + localx + ", localy="
-				+ localy + ", regionno=" + regionno + ", amount=" + amount + "]";
+				+ localy + ", amount=" + amount + ", regionno=" + regionno + "]";
 	}
-
-	
-	
 	
 	
 	
